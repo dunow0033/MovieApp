@@ -8,6 +8,6 @@ namespace STUDY.MVC.Movies.Repositories
         Task<Movie?> GetAsync(int? id);
         Task<Movie?> AddAsync(Movie movie);
         Task<Movie?> UpdateAsync(Movie movie);
-        Task<Movie?> DeleteAsync(Guid tag);
+        Task<Movie?> DeleteAsync(int id);
     }
 }

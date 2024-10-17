@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using STUDY.MVC.Movies.Data;
 using STUDY.MVC.Movies.Models;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
 namespace STUDY.MVC.Movies.Repositories
 {
@@ -25,17 +27,55 @@ namespace STUDY.MVC.Movies.Repositories
             return movie;
         }
 
-        public Task<Movie?> DeleteAsync(int tag)
+        public async Task<Movie?> UpdateAsync(Movie movie)
         {
+            var existingMovie = await moviesContext.Movie.FindAsync(movie.Id);
+
+            if (existingMovie != null) 
+            {
+                try
+                {
+                    existingMovie.Title = movie.Title;
+                    existingMovie.ReleaseDate = movie.ReleaseDate;
+                    existingMovie.Price = movie.Price;
+                    existingMovie.Genre = movie.Genre;
+                    existingMovie.Rating = movie.Rating;
+                    await moviesContext.SaveChangesAsync();
+                    return existingMovie;
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!MovieExists(movie.Id))
+                    {
+                        return null;
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        public async Task<Movie?> DeleteAsync(int id)
+        {
+            //await moviesContext.Movie.Remove(id);
             throw new NotImplementedException();
         }
 
-        public Task<Movie?> GetAsync(int? id)
+        public async Task<Movie?> GetAsync(int id)
         {
-            return moviesContext.Movie.FirstOrDefaultAsync(m => m.Id == id);
+            return await moviesContext.Movie.FirstOrDefaultAsync(m => m.Id == id);
         }
 
-        public Task<Movie?> UpdateAsync(Movie movie)
+        private bool MovieExists(int id)
+        {
+            return moviesContext.Movie.Any(e => e.Id == id);
+        }
+
+        Task<Movie?> IMovieRepository.GetAsync(int? id)
         {
             throw new NotImplementedException();
         }

@@ -9,11 +9,10 @@ namespace STUDY.MVC.Movies.Data
 {
     public class MoviesContext : DbContext
     {
-        public MoviesContext (DbContextOptions<MoviesContext> options)
-            : base(options)
+        public MoviesContext (DbContextOptions<MoviesContext> options) : base(options)
         {
         }
 
-        public DbSet<STUDY.MVC.Movies.Models.Movie> Movie { get; set; } = default!;
+        public DbSet<Movie> Movie { get; set; } = default!;
     }
 }
