@@ -3,19 +3,19 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using STUDY.MVC.Movies.Data;
 using STUDY.MVC.Movies.Models;
+using STUDY.MVC.Movies.Repositories;
 
 namespace STUDY.MVC.Movies.Controllers;
 
 public class MoviesController : Controller
 {
-    private readonly MoviesContext _context;
+    private readonly IMovieRepository movieRepository;
 
-    public MoviesController(MoviesContext context)
+    public MoviesController(MovieRepository movieRepository)
     {
-        _context = context;
+        this.movieRepository = movieRepository;
     }
 
-    // GET: Movies
     // GET: Movies
     public async Task<IActionResult> Index(string movieGenre, string searchString)
     {
@@ -48,13 +48,12 @@ public class MoviesController : Controller
     // GET: Movies/Details/5
     public async Task<IActionResult> Details(int? id)
     {
-        if (id == null || _context.Movie == null)
+        if (id == null || movieRepository.GetAllMoviesAsync() == null)
         {
             return NotFound();
         }
 
-        var movie = await _context.Movie
-            .FirstOrDefaultAsync(m => m.Id == id);
+        var movie = await movieRepository.GetAsync(id);
         if (movie == null)
         {
             return NotFound();
@@ -78,8 +77,7 @@ public class MoviesController : Controller
     {
         if (ModelState.IsValid)
         {
-            _context.Add(movie);
-            await _context.SaveChangesAsync();
+            await movieRepository.AddAsync(movie);
             return RedirectToAction(nameof(Index));
         }
         return View(movie);
@@ -88,12 +86,12 @@ public class MoviesController : Controller
     // GET: Movies/Edit/5
     public async Task<IActionResult> Edit(int? id)
     {
-        if (id == null || _context.Movie == null)
+        if (id == null || movieRepository.GetAllMoviesAsync() == null)
         {
             return NotFound();
         }
 
-        var movie = await _context.Movie.FindAsync(id);
+        var movie = await movieRepository.GetAsync(id);
         if (movie == null)
         {
             return NotFound();
