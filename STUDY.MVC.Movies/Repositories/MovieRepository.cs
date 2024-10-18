@@ -59,10 +59,10 @@ namespace STUDY.MVC.Movies.Repositories
             return null;
         }
 
-        public async Task<Movie?> DeleteAsync(int id)
+        public void DeleteAsync(Movie movie)
         {
-            //await moviesContext.Movie.Remove(id);
-            throw new NotImplementedException();
+            moviesContext.Movie.Remove(movie);
+            moviesContext.SaveChangesAsync();
         }
 
         public async Task<Movie?> GetAsync(int id)
@@ -74,10 +74,5 @@ namespace STUDY.MVC.Movies.Repositories
         {
             return moviesContext.Movie.Any(e => e.Id == id);
         }
-
-        Task<Movie?> IMovieRepository.GetAsync(int? id)
-        {
-            throw new NotImplementedException();
-        }
-    }
+}
 }

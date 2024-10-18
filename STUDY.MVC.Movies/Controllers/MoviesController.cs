@@ -84,7 +84,7 @@ public class MoviesController : Controller
     // GET: Movies/Edit/5
     public async Task<IActionResult> Edit(int id)
     {
-        if (id == null || movieRepository.GetAllMoviesAsync() == null)
+        if (movieRepository.GetAllMoviesAsync() == null)
         {
             return NotFound();
         }
@@ -122,40 +122,40 @@ public class MoviesController : Controller
         return View(movie);
     }
 
-    // GET: Movies/Delete/5
-    //public async Task<IActionResult> Delete(int id)
-    //{
-    //    if (id == null || movieRepository.GetAllMoviesAsync() == null)
-    //    {
-    //        return NotFound();
-    //    }
+    //GET: Movies/Delete/5
+    public async Task<IActionResult> Delete(int? id)
+    {
+        if (id == null || movieRepository.GetAllMoviesAsync() == null)
+        {
+            return NotFound();
+        }
 
-    //    var movie = await this.movieRepository.Movie
-    //        .FirstOrDefaultAsync(m => m.Id == id);
-    //    if (movie == null)
-    //    {
-    //        return NotFound();
-    //    }
+        var movie = await movieRepository.GetAsync(id);
+        if (movie == null)
+        {
+            return NotFound();
+        }
 
-    //    return View(movie);
-    //}
+        return View(movie);
+    }
 
-    //// POST: Movies/Delete/5
-    //[HttpPost, ActionName("Delete")]
-    //[ValidateAntiForgeryToken]
-    //public async Task<IActionResult> DeleteConfirmed(int id)
-    //{
-    //    if (_context.Movie == null)
-    //    {
-    //        return Problem("Entity set 'MoviesContext.Movie'  is null.");
-    //    }
-    //    var movie = await _context.Movie.FindAsync(id);
-    //    if (movie != null)
-    //    {
-    //        _context.Movie.Remove(movie);
-    //    }
-        
-    //    await _context.SaveChangesAsync();
-    //    return RedirectToAction(nameof(Index));
-    //}
+    // POST: Movies/Delete/5
+    [HttpPost, ActionName("Delete")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteConfirmed(int id)
+    {
+        if (movieRepository.GetAllMoviesAsync == null)
+        {
+            return Problem("Entity set of all movies is null.");
+        }
+
+        var movie = await movieRepository.GetAsync(id);
+
+        if (movie != null)
+        {
+            await movieRepository.DeleteAsync(movie);
+        }
+       
+        return RedirectToAction(nameof(Index));
+    }
 }
